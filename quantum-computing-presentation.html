@@ -1,0 +1,2114 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Computing - The Future of Computation</title>
+  <style>
+    :root {
+      --bg-0: #02040f;
+      --bg-1: #091429;
+      --bg-2: #111d35;
+      --glass: rgba(10, 18, 36, 0.58);
+      --glass-strong: rgba(9, 14, 30, 0.84);
+      --text: #e8f7ff;
+      --muted: #9fb7d9;
+      --cyan: #61f8ff;
+      --blue: #3ca0ff;
+      --purple: #8f6dff;
+      --border: rgba(141, 195, 255, 0.34);
+      --glow: 0 0 18px rgba(97, 248, 255, 0.52), 0 0 52px rgba(60, 160, 255, 0.32);
+      --px: 0px;
+      --py: 0px;
+      --rx: 0deg;
+      --ry: 0deg;
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      overflow: hidden;
+      color: var(--text);
+      font-family: "Segoe UI Variable Display", "Candara", "Trebuchet MS", sans-serif;
+      background:
+        radial-gradient(95% 80% at 9% 7%, rgba(97, 248, 255, 0.2), transparent 52%),
+        radial-gradient(90% 76% at 90% 12%, rgba(143, 109, 255, 0.2), transparent 54%),
+        radial-gradient(65% 60% at 52% 100%, rgba(60, 160, 255, 0.18), transparent 60%),
+        linear-gradient(156deg, var(--bg-0) 0%, var(--bg-1) 45%, var(--bg-2) 100%);
+      position: relative;
+      isolation: isolate;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -20%;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        conic-gradient(from 45deg at 30% 30%, rgba(97, 248, 255, 0.2), transparent 28%, rgba(60, 160, 255, 0.18) 58%, transparent 76%, rgba(143, 109, 255, 0.22)),
+        radial-gradient(42% 32% at 68% 70%, rgba(97, 248, 255, 0.18), transparent 74%);
+      filter: blur(48px);
+      opacity: 0.85;
+      animation: auroraShift 22s ease-in-out infinite alternate;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        repeating-linear-gradient(
+          180deg,
+          rgba(160, 210, 255, 0.04) 0,
+          rgba(160, 210, 255, 0.04) 1px,
+          transparent 1px,
+          transparent 4px
+        );
+      opacity: 0.2;
+      mix-blend-mode: screen;
+      animation: scanlineDrift 7s linear infinite;
+    }
+
+    .background-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(98, 152, 255, 0.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(98, 152, 255, 0.12) 1px, transparent 1px),
+        linear-gradient(45deg, rgba(97, 248, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(-45deg, rgba(143, 109, 255, 0.06) 1px, transparent 1px);
+      background-size: 68px 68px, 68px 68px, 136px 136px, 136px 136px;
+      mask-image: radial-gradient(circle at center, black 34%, transparent 96%);
+      opacity: 0.28;
+      animation: gridDrift 28s linear infinite;
+    }
+
+    #particle-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(163, 255, 255, 0.98) 0%, rgba(97, 248, 255, 0.42) 54%, rgba(97, 248, 255, 0) 100%);
+      box-shadow: 0 0 12px rgba(97, 248, 255, 0.84), 0 0 30px rgba(143, 109, 255, 0.54);
+      opacity: 0.56;
+      mix-blend-mode: screen;
+      animation:
+        drift var(--duration) ease-in-out var(--delay) infinite alternate,
+        twinkle var(--twinkle) ease-in-out var(--delay) infinite,
+        pulseFloat calc(var(--duration) * 0.56) ease-in-out var(--delay) infinite;
+      transform: translate3d(0, 0, 0);
+    }
+
+    @keyframes drift {
+      0% {
+        transform: translate3d(0, 0, 0) scale(0.92);
+      }
+      50% {
+        transform: translate3d(var(--dx), var(--dy), 0) scale(1.14);
+      }
+      100% {
+        transform: translate3d(calc(var(--dx) * -0.6), calc(var(--dy) * -0.32), 0) scale(0.96);
+      }
+    }
+
+    @keyframes twinkle {
+      0%,
+      100% {
+        opacity: 0.18;
+      }
+      50% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes pulseFloat {
+      0%,
+      100% {
+        filter: hue-rotate(0deg) blur(0px);
+      }
+      50% {
+        filter: hue-rotate(35deg) blur(0.6px);
+      }
+    }
+
+    @keyframes auroraShift {
+      0% {
+        transform: translate3d(-4%, -3%, 0) rotate(0deg);
+      }
+      50% {
+        transform: translate3d(3%, 2%, 0) rotate(14deg);
+      }
+      100% {
+        transform: translate3d(-2%, 5%, 0) rotate(-8deg);
+      }
+    }
+
+    @keyframes scanlineDrift {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(14px);
+      }
+    }
+
+    @keyframes gridDrift {
+      from {
+        background-position: 0 0, 0 0, 0 0, 0 0;
+      }
+      to {
+        background-position: 68px 68px, -68px 68px, 136px -136px, -136px 136px;
+      }
+    }
+
+    .presentation-shell {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      padding: clamp(10px, 1.9vw, 24px);
+    }
+
+    .deck {
+      position: relative;
+      width: min(1450px, 96vw);
+      height: min(890px, 95vh);
+      border-radius: 34px;
+      overflow: hidden;
+      border: 1px solid rgba(126, 194, 255, 0.34);
+      background:
+        linear-gradient(172deg, rgba(8, 15, 32, 0.82), rgba(9, 19, 42, 0.52)),
+        radial-gradient(120% 80% at 50% 120%, rgba(97, 248, 255, 0.11), transparent 70%);
+      box-shadow:
+        0 34px 100px rgba(0, 0, 0, 0.67),
+        0 0 0 1px rgba(140, 199, 255, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.11);
+      transform-style: preserve-3d;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: clamp(1.15rem, 2.3vw, 2.4rem) clamp(1.2rem, 3vw, 3.2rem) 6.8rem;
+      display: flex;
+      opacity: 0;
+      transform: translateX(13%) scale(0.92) rotateY(-10deg);
+      filter: blur(9px) saturate(0.7);
+      pointer-events: none;
+      transform-origin: center center;
+      transition:
+        opacity 0.84s cubic-bezier(0.18, 0.78, 0.16, 1),
+        transform 0.88s cubic-bezier(0.18, 0.78, 0.16, 1),
+        filter 0.84s ease;
+    }
+
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(65% 44% at 86% 12%, rgba(143, 109, 255, 0.16), transparent 72%),
+        radial-gradient(48% 38% at 12% 92%, rgba(97, 248, 255, 0.13), transparent 74%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .slide::after {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      pointer-events: none;
+      background: linear-gradient(102deg, transparent 20%, rgba(97, 248, 255, 0.12) 42%, transparent 61%);
+      transform: translateX(-120%);
+      animation: slideScan 8s linear infinite;
+      z-index: 1;
+      mix-blend-mode: screen;
+    }
+
+    .slide.past {
+      transform: translateX(-13%) scale(0.92) rotateY(10deg);
+      opacity: 0;
+    }
+
+    .slide.future {
+      transform: translateX(13%) scale(0.92) rotateY(-10deg);
+      opacity: 0;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0) scale(1) rotateY(0deg);
+      filter: blur(0) saturate(1);
+      pointer-events: auto;
+      z-index: 2;
+    }
+
+    .slide-content {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.68rem, 1.1vw, 1.2rem);
+      overflow: auto;
+      overflow-x: hidden;
+      padding-right: 0.25rem;
+      transform: translate3d(var(--px), var(--py), 0) rotateX(var(--rx)) rotateY(var(--ry));
+      transition: transform 0.2s ease-out;
+      transform-style: preserve-3d;
+      overscroll-behavior: contain;
+    }
+
+    .slide-content::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    .slide-content::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, rgba(68, 246, 255, 0.72), rgba(165, 111, 255, 0.72));
+      border-radius: 999px;
+    }
+
+    .eyebrow {
+      align-self: flex-start;
+      padding: 0.35rem 0.72rem;
+      border-radius: 999px;
+      border: 1px solid rgba(68, 246, 255, 0.48);
+      color: #d8f8ff;
+      letter-spacing: 0.08em;
+      font-size: clamp(0.7rem, 0.92vw, 0.82rem);
+      text-transform: uppercase;
+      background: rgba(8, 20, 44, 0.58);
+      box-shadow: inset 0 0 0 1px rgba(68, 246, 255, 0.13), 0 0 16px rgba(68, 246, 255, 0.25);
+    }
+
+    h1,
+    h2 {
+      line-height: 1.1;
+      letter-spacing: 0.01em;
+      text-wrap: balance;
+    }
+
+    h1 {
+      font-size: clamp(2.1rem, 4.9vw, 4.8rem);
+      font-weight: 700;
+      color: #e8f7ff;
+      background-image: linear-gradient(110deg, #a8feff 6%, #8bc3ff 35%, #bda0ff 58%, #76f7ff 94%);
+      background-size: 220% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: neonPulse 3.7s ease-in-out infinite, gradientShift 9s linear infinite;
+      text-shadow: 0 0 24px rgba(97, 248, 255, 0.34), 0 0 44px rgba(60, 160, 255, 0.28);
+      letter-spacing: 0.015em;
+    }
+
+    h2 {
+      font-size: clamp(1.45rem, 2.8vw, 2.6rem);
+      font-weight: 650;
+      color: #e8f4ff;
+      animation: neonPulse 5.3s ease-in-out infinite;
+      text-shadow: 0 0 14px rgba(97, 248, 255, 0.28), 0 0 24px rgba(60, 160, 255, 0.22);
+    }
+
+    h3 {
+      font-size: clamp(1rem, 1.7vw, 1.45rem);
+      font-weight: 620;
+      color: #e6f7ff;
+      line-height: 1.25;
+    }
+
+    h1,
+    h2,
+    h3 {
+      text-align: center;
+    }
+
+    p,
+    li,
+    td,
+    th {
+      font-size: clamp(0.9rem, 1.16vw, 1.13rem);
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    strong {
+      color: #eaf9ff;
+      font-weight: 650;
+    }
+
+    ul {
+      list-style: none;
+      display: grid;
+      gap: 0.6rem;
+    }
+
+    li {
+      position: relative;
+      padding-left: 1.14rem;
+    }
+
+    li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.6em;
+      width: 0.48rem;
+      height: 0.48rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      box-shadow: 0 0 10px rgba(68, 246, 255, 0.8);
+    }
+
+    .hero-layout {
+      justify-content: center;
+      align-items: flex-start;
+      gap: clamp(0.8rem, 1.2vw, 1.3rem);
+    }
+
+    .hero-subtitle {
+      margin-top: -0.2rem;
+      color: #cce4ff;
+      font-size: clamp(1.35rem, 2.5vw, 2.3rem);
+    }
+
+    .hero-presenter {
+      color: #b7d3f6;
+      font-size: clamp(1.02rem, 1.5vw, 1.32rem);
+      letter-spacing: 0.02em;
+      margin-bottom: 0.1rem;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.58rem;
+    }
+
+    .chip {
+      padding: 0.34rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(129, 204, 255, 0.52);
+      color: #e5faff;
+      background: rgba(8, 26, 52, 0.74);
+      font-size: clamp(0.76rem, 0.95vw, 0.88rem);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06), 0 0 20px rgba(97, 248, 255, 0.16);
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: clamp(0.72rem, 1.4vw, 1.3rem);
+      flex: 1;
+      min-height: 0;
+    }
+
+    .split-equal {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(0.72rem, 1.4vw, 1.3rem);
+      flex: 1;
+      min-height: 0;
+    }
+
+    .stack {
+      display: grid;
+      gap: clamp(0.6rem, 1vw, 0.9rem);
+      align-content: flex-start;
+    }
+
+    .glass-card {
+      background:
+        linear-gradient(162deg, rgba(15, 25, 46, 0.74), rgba(10, 16, 31, 0.68)),
+        radial-gradient(120% 120% at 88% -10%, rgba(97, 248, 255, 0.11), transparent 62%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: clamp(0.75rem, 1.05vw, 1.05rem);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.07),
+        0 16px 36px rgba(0, 0, 0, 0.36);
+      backdrop-filter: blur(15px) saturate(128%);
+      transition:
+        transform 0.34s ease,
+        border-color 0.34s ease,
+        box-shadow 0.34s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .glass-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      border: 1px solid rgba(182, 221, 255, 0.11);
+      pointer-events: none;
+    }
+
+    .glass-card:hover {
+      transform: translateY(-7px) scale(1.012);
+      border-color: rgba(97, 248, 255, 0.66);
+      box-shadow:
+        0 20px 42px rgba(10, 31, 66, 0.5),
+        var(--glow);
+    }
+
+    .glass-card::after {
+      content: "";
+      position: absolute;
+      left: -95%;
+      top: -18%;
+      width: 52%;
+      height: 136%;
+      background: linear-gradient(105deg, transparent, rgba(97, 248, 255, 0.16), transparent);
+      transform: skewX(-16deg);
+      animation: cardSweep 9.5s linear infinite;
+      pointer-events: none;
+    }
+
+    .glass-card:hover::after {
+      animation-duration: 4.2s;
+    }
+    .centered-card {
+      display: grid;
+      place-items: center;
+      gap: 0.6rem;
+    }
+
+    .diagram-svg {
+      width: 100%;
+      height: auto;
+      max-height: min(44vh, 340px);
+      display: block;
+    }
+
+    .small-note {
+      color: #85a8ce;
+      font-size: clamp(0.76rem, 0.9vw, 0.88rem);
+      line-height: 1.4;
+    }
+
+    .photo-card {
+      padding: 0.58rem;
+    }
+
+    .feature-image {
+      width: 100%;
+      display: block;
+      border-radius: 16px;
+      border: 1px solid rgba(148, 208, 255, 0.44);
+      box-shadow: 0 0 26px rgba(97, 248, 255, 0.16);
+      object-fit: cover;
+      aspect-ratio: 16 / 9;
+      animation: imageFloat 8.5s ease-in-out infinite;
+      transform-origin: center;
+    }
+
+    .photo-card:hover .feature-image {
+      transform: scale(1.02);
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(0.62rem, 1.1vw, 0.9rem);
+    }
+
+    .metric-grid-four {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: clamp(0.62rem, 1.1vw, 0.9rem);
+    }
+
+    .metric {
+      text-align: center;
+    }
+
+    .metric-value {
+      font-size: clamp(1.15rem, 1.95vw, 1.75rem);
+      font-weight: 650;
+      color: #dff8ff;
+      text-shadow: 0 0 10px rgba(68, 246, 255, 0.35);
+    }
+
+    .metric-label {
+      font-size: clamp(0.72rem, 0.92vw, 0.84rem);
+      letter-spacing: 0.05em;
+      color: #8eaccf;
+      text-transform: uppercase;
+    }
+
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(0.72rem, 1.3vw, 1.05rem);
+      flex: 1;
+      min-height: 0;
+    }
+
+    .icon-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(0.72rem, 1.3vw, 1.05rem);
+      flex: 1;
+      min-height: 0;
+    }
+
+    .icon-wrap {
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      border: 1px solid rgba(102, 182, 255, 0.45);
+      display: grid;
+      place-items: center;
+      background: rgba(12, 28, 54, 0.7);
+      box-shadow: inset 0 0 0 1px rgba(68, 246, 255, 0.13), 0 0 18px rgba(68, 246, 255, 0.2);
+      margin-bottom: 0.5rem;
+    }
+
+    .icon-wrap svg {
+      width: 30px;
+      height: 30px;
+      stroke: var(--cyan);
+      fill: none;
+      stroke-width: 1.9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 0 6px rgba(68, 246, 255, 0.7));
+    }
+
+    .table-wrap {
+      overflow: hidden;
+      border-radius: 16px;
+      border: 1px solid rgba(115, 176, 255, 0.3);
+      background: rgba(8, 18, 38, 0.58);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 0.62rem 0.65rem;
+      border-bottom: 1px solid rgba(96, 147, 215, 0.2);
+      text-align: left;
+    }
+
+    th {
+      color: #d6f7ff;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      background: rgba(12, 27, 52, 0.58);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .two-tone {
+      background: linear-gradient(145deg, rgba(68, 246, 255, 0.13), rgba(165, 111, 255, 0.08));
+    }
+
+    .quantum-curve {
+      fill: none;
+      stroke-width: 4;
+      stroke-linecap: round;
+      filter: drop-shadow(0 0 10px rgba(68, 246, 255, 0.45));
+      stroke-dasharray: 680;
+      stroke-dashoffset: 680;
+      animation: drawPath 4.5s ease-in-out infinite;
+    }
+
+    .classical-curve {
+      fill: none;
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-dasharray: 780;
+      stroke-dashoffset: 780;
+      animation: drawPath 4.5s ease-in-out infinite 0.4s;
+    }
+
+    @keyframes drawPath {
+      0% {
+        stroke-dashoffset: 780;
+        opacity: 0.45;
+      }
+      40% {
+        opacity: 1;
+      }
+      100% {
+        stroke-dashoffset: 0;
+        opacity: 1;
+      }
+    }
+
+    .circuit-wire {
+      fill: none;
+      stroke: rgba(214, 234, 255, 0.78);
+      stroke-width: 3.3;
+      stroke-linecap: round;
+    }
+
+    .circuit-gate {
+      fill: rgba(68, 246, 255, 0.12);
+      stroke: rgba(68, 246, 255, 0.82);
+      stroke-width: 2.2;
+      rx: 11;
+      filter: drop-shadow(0 0 12px rgba(68, 246, 255, 0.3));
+    }
+
+    .gate-glow {
+      animation: gatePulse 2.7s ease-in-out infinite;
+    }
+
+    @keyframes gatePulse {
+      0%,
+      100% {
+        filter: drop-shadow(0 0 8px rgba(68, 246, 255, 0.3));
+      }
+      50% {
+        filter: drop-shadow(0 0 16px rgba(68, 246, 255, 0.8));
+      }
+    }
+
+    .gate-label {
+      fill: #e8fbff;
+      font-size: 22px;
+      font-weight: 700;
+      font-family: "Consolas", "Lucida Console", monospace;
+      letter-spacing: 0.04em;
+    }
+
+    .signal-dot {
+      fill: #7bffff;
+      filter: drop-shadow(0 0 8px rgba(68, 246, 255, 0.96));
+    }
+
+    .bloch-sphere {
+      filter: drop-shadow(0 0 24px rgba(68, 246, 255, 0.35));
+    }
+
+    .bloch-vector {
+      transform-origin: 210px 160px;
+      transform-box: fill-box;
+      animation: none;
+    }
+
+    .entangle-link {
+      fill: none;
+      stroke-width: 5;
+      stroke-linecap: round;
+      stroke-dasharray: 16 11;
+      animation: flowLine 1.8s linear infinite;
+      filter: drop-shadow(0 0 10px rgba(68, 246, 255, 0.56));
+    }
+
+    .flow-line {
+      fill: none;
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-dasharray: 14 9;
+      animation: flowLine 1.7s linear infinite;
+    }
+
+    @keyframes flowLine {
+      to {
+        stroke-dashoffset: -72;
+      }
+    }
+
+    .player-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(0.7rem, 1.3vw, 1rem);
+      flex: 1;
+      min-height: 0;
+    }
+
+    .player-logo {
+      font-size: clamp(1.26rem, 2vw, 1.7rem);
+      font-weight: 700;
+      color: #e3f9ff;
+      margin-bottom: 0.25rem;
+      text-shadow: 0 0 10px rgba(68, 246, 255, 0.35);
+      letter-spacing: 0.02em;
+    }
+
+    .hybrid-no {
+      font-size: clamp(2rem, 4vw, 3.8rem);
+      font-weight: 760;
+      color: #eaf8ff;
+      text-shadow: var(--glow);
+      margin-bottom: 0.2rem;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 0.6rem;
+      align-content: start;
+    }
+
+    .timeline-item {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-size: clamp(0.86rem, 1.04vw, 1rem);
+      color: #9bb8d9;
+    }
+
+    .timeline-dot {
+      width: 0.76rem;
+      height: 0.76rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      box-shadow: 0 0 10px rgba(68, 246, 255, 0.8);
+      flex: 0 0 auto;
+    }
+
+    .future-wrap {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: clamp(0.8rem, 1.4vw, 1.2rem);
+      flex: 1;
+      min-height: 0;
+      align-items: center;
+    }
+
+    .future-core {
+      display: grid;
+      place-items: center;
+      min-height: 290px;
+    }
+
+    .future-orb {
+      width: min(35vw, 330px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      position: relative;
+      background: radial-gradient(circle at 34% 28%, rgba(127, 255, 255, 0.64), rgba(52, 118, 232, 0.37) 44%, rgba(17, 34, 78, 0.2) 68%, transparent 76%);
+      box-shadow:
+        0 0 30px rgba(68, 246, 255, 0.7),
+        0 0 90px rgba(68, 246, 255, 0.25),
+        inset 0 0 70px rgba(165, 111, 255, 0.35);
+      animation: orbPulse 4.2s ease-in-out infinite;
+    }
+
+    .future-orb::before,
+    .future-orb::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(68, 246, 255, 0.52);
+      inset: -18px;
+      animation: ringSpin 11s linear infinite;
+    }
+
+    .future-orb::after {
+      inset: -46px;
+      border-color: rgba(165, 111, 255, 0.4);
+      animation-duration: 16s;
+      animation-direction: reverse;
+    }
+
+    @keyframes orbPulse {
+      0%,
+      100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.07);
+      }
+    }
+
+    @keyframes ringSpin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .thank-you {
+      display: grid;
+      place-items: center;
+      text-align: center;
+      gap: 0.3rem;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .thank-you h1 {
+      font-size: clamp(2.35rem, 5.7vw, 5.7rem);
+    }
+
+    .thank-you .questions {
+      font-size: clamp(1.32rem, 2.8vw, 2.4rem);
+      color: #d2ebff;
+      text-shadow: 0 0 13px rgba(68, 246, 255, 0.35);
+    }
+
+    .nav-bar {
+      position: absolute;
+      left: 50%;
+      bottom: 1.05rem;
+      transform: translateX(-50%);
+      width: min(780px, calc(100% - 2.4rem));
+      z-index: 4;
+      border-radius: 18px;
+      border: 1px solid rgba(129, 194, 255, 0.38);
+      background:
+        linear-gradient(145deg, rgba(7, 15, 33, 0.86), rgba(7, 19, 40, 0.74)),
+        radial-gradient(140% 120% at 0% 0%, rgba(97, 248, 255, 0.12), transparent 62%);
+      backdrop-filter: blur(14px);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), 0 18px 38px rgba(0, 0, 0, 0.48);
+      padding: 0.58rem 0.72rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.7rem;
+    }
+
+    .nav-btn {
+      border: 1px solid rgba(124, 199, 255, 0.56);
+      background: linear-gradient(145deg, rgba(10, 30, 60, 0.96), rgba(9, 21, 44, 0.92));
+      color: #e7fbff;
+      border-radius: 13px;
+      padding: 0.58rem 1rem;
+      font-size: clamp(0.84rem, 1vw, 0.95rem);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      text-transform: uppercase;
+      min-width: 130px;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      transform: translateY(-2px) scale(1.015);
+      border-color: rgba(97, 248, 255, 0.82);
+      box-shadow: var(--glow);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .slide-indicator {
+      min-width: 132px;
+      text-align: center;
+      font-family: "Consolas", "Lucida Console", monospace;
+      letter-spacing: 0.15em;
+      color: #e5fbff;
+      font-size: clamp(0.9rem, 1.1vw, 1.03rem);
+      text-shadow: 0 0 12px rgba(97, 248, 255, 0.45);
+    }
+
+    .key-hint {
+      color: #88a8ca;
+      font-size: clamp(0.72rem, 0.9vw, 0.82rem);
+      letter-spacing: 0.02em;
+      text-align: right;
+      min-width: 190px;
+    }
+
+    @keyframes neonPulse {
+      0%,
+      100% {
+        text-shadow: 0 0 12px rgba(97, 248, 255, 0.34), 0 0 28px rgba(60, 160, 255, 0.25);
+      }
+      50% {
+        text-shadow: 0 0 22px rgba(97, 248, 255, 0.62), 0 0 42px rgba(60, 160, 255, 0.34);
+      }
+    }
+
+    @keyframes gradientShift {
+      from {
+        background-position: 0% center;
+      }
+      to {
+        background-position: 220% center;
+      }
+    }
+
+    @keyframes slideScan {
+      0% {
+        transform: translateX(-120%);
+      }
+      46%,
+      100% {
+        transform: translateX(220%);
+      }
+    }
+
+    @keyframes cardSweep {
+      0% {
+        transform: translateX(0) skewX(-16deg);
+      }
+      35%,
+      100% {
+        transform: translateX(320%) skewX(-16deg);
+      }
+    }
+
+    @keyframes imageFloat {
+      0%,
+      100% {
+        transform: translateY(0) scale(1);
+      }
+      50% {
+        transform: translateY(-5px) scale(1.01);
+      }
+    }
+
+    @media (max-width: 1120px) {
+      .deck {
+        width: min(1320px, 97vw);
+        height: min(920px, 96vh);
+      }
+
+      .split,
+      .split-equal,
+      .future-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .metric-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .metric-grid-four {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .icon-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .nav-bar {
+        width: min(680px, calc(100% - 1.6rem));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .deck {
+        width: 97vw;
+        height: 96vh;
+        border-radius: 22px;
+      }
+
+      .slide {
+        padding: 1rem 1rem 7.3rem;
+      }
+
+      .player-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .icon-grid,
+      .icon-grid-4 {
+        grid-template-columns: 1fr;
+      }
+
+      .metric-grid,
+      .metric-grid-four {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-bar {
+        width: calc(100% - 1.2rem);
+        padding: 0.5rem;
+        gap: 0.45rem;
+      }
+
+      .nav-btn {
+        min-width: 96px;
+        padding: 0.5rem 0.72rem;
+      }
+
+      .slide-indicator {
+        min-width: 86px;
+        letter-spacing: 0.08em;
+      }
+
+      .key-hint {
+        display: none;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .slide {
+        padding: 0.85rem 0.82rem 7.2rem;
+      }
+
+      .nav-bar {
+        grid-template-columns: 1fr auto 1fr;
+        display: grid;
+        align-items: center;
+      }
+
+      .nav-btn {
+        width: 100%;
+      }
+
+      .slide-indicator {
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (max-height: 760px) {
+      .deck {
+        height: 98vh;
+      }
+
+      .slide {
+        padding-bottom: 6.2rem;
+      }
+
+      .diagram-svg {
+        max-height: min(38vh, 270px);
+      }
+    }
+
+    @media (hover: none), (pointer: coarse) {
+      .slide-content {
+        transform: none !important;
+      }
+
+      .slide,
+      .slide.past,
+      .slide.future,
+      .slide.active {
+        transform: translateX(0) scale(1) rotateY(0deg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="background-grid" aria-hidden="true"></div>
+  <div id="particle-layer" aria-hidden="true"></div>
+
+  <div class="presentation-shell">
+    <div class="deck" id="deck">
+      <section class="slide active" data-prompt="Abstract quantum computing background with glowing blue particle field, flowing energy waves, deep space atmosphere, holographic light particles floating in dark void, dark futuristic background, neon cyan and electric blue glow, subtle purple accents, ultra detailed, cinematic lighting, depth of field, 4k resolution, high contrast, professional tech conference aesthetic">
+        <div class="slide-content hero-layout">
+          <span class="eyebrow">Slide 1 - Title</span>
+          <h1>Quantum Computing</h1>
+          <h2 class="hero-subtitle">The Future of Computation</h2>
+          <div class="glass-card">
+            <h3>Brief Intro</h3>
+            <ul>
+              <li>We are approaching the physical limits of silicon.</li>
+              <li>Quantum mechanics may unlock a new era of exponential computation.</li>
+            </ul>
+          </div>
+          <div class="chip-row">
+            <span class="chip">Classical Era</span>
+            <span class="chip">Silicon Limits</span>
+            <span class="chip">Quantum Era</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-prompt="3D glowing Bloch sphere visualization, rotating quantum state vector arrow, holographic sphere grid lines, floating in dark laboratory environment, neon blue quantum energy glow, futuristic science aesthetic, ultra detailed, cinematic lighting, depth of field, 4k resolution, high contrast, professional tech conference aesthetic">
+        <div class="slide-content">
+          <span class="eyebrow">Slide 2 - Foundation</span>
+          <h2>What Is Quantum Computing?</h2>
+          <div class="stack">
+            <div class="glass-card">
+              <h3>Definition</h3>
+              <p>Quantum computing is a new paradigm of computation that leverages the principles of quantum mechanics, superposition, entanglement, and interference, to process information.</p>
+            </div>
+            <div class="glass-card">
+              <h3>Core Concept</h3>
+              <ul>
+                <li>Classical computers use bits: 0 or 1.</li>
+                <li>Quantum computers use qubits that can exist in multiple states simultaneously.</li>
+                <li>This expands computational possibilities beyond classical logic paths.</li>
+              </ul>
+            </div>
+            <div class="glass-card">
+              <h3>Deep Insight</h3>
+              <ul>
+                <li><strong>Classical computing:</strong> deterministic logic.</li>
+                <li><strong>Quantum computing:</strong> probabilistic amplitude manipulation.</li>
+                <li>Information is encoded in quantum states of particles like electrons or photons.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-prompt="Exponential growth graph glowing neon blue on dark background, dramatic rising curve illustrating computational complexity, futuristic digital grid style, high contrast, 4k resolution, dark futuristic background, neon cyan and electric blue glow, subtle purple accents, ultra detailed, cinematic lighting, depth of field, professional tech conference aesthetic">
+        <div class="slide-content">
+          <span class="eyebrow">Slide 3 - Motivation</span>
+          <h2>Why Do We Need Quantum?</h2>
+          <div class="split">
+            <div class="stack">
+              <div class="glass-card">
+                <h3>The Problem</h3>
+                <p>Some problems grow exponentially in difficulty:</p>
+                <ul>
+                  <li>Prime factorization</li>
+                  <li>Molecular simulation</li>
+                  <li>Optimization across millions of variables</li>
+                  <li>Cryptographic key breaking</li>
+                </ul>
+              </div>
+              <div class="glass-card">
+                <h3>Classical Limitation</h3>
+                <ul>
+                  <li>Cannot efficiently simulate complex quantum systems.</li>
+                  <li>Struggle with NP-hard optimization problems.</li>
+                </ul>
+              </div>
+              <div class="glass-card two-tone">
+                <h3>Key Insight</h3>
+                <p>Nature itself runs on quantum physics. To simulate nature efficiently, we need quantum machines.</p>
+              </div>
+            </div>
+            <div class="glass-card centered-card">
+              <h3>Complexity Comparison</h3>
+              <svg class="diagram-svg" viewBox="0 0 680 340" aria-label="Exponential complexity comparison graphic">
+                <rect x="64" y="38" width="560" height="250" fill="rgba(10,22,45,0.35)" stroke="rgba(105,165,245,0.38)"></rect>
+                <line x1="90" y1="264" x2="590" y2="264" stroke="rgba(210,235,255,0.7)" stroke-width="2.2"></line>
+                <line x1="90" y1="264" x2="90" y2="64" stroke="rgba(210,235,255,0.7)" stroke-width="2.2"></line>
+                <text x="604" y="271" fill="#a8c8eb" font-size="16">Problem size</text>
+                <text x="42" y="58" fill="#a8c8eb" font-size="16">Time</text>
+                <path class="classical-curve" d="M90 262 C172 258 238 247 300 215 C365 180 420 130 482 70 C520 38 556 24 590 18" stroke="#ff7fb7"></path>
+                <path class="quantum-curve" d="M90 262 C185 255 270 245 350 222 C438 198 515 178 590 156" stroke="#44f6ff"></path>
+                <text x="497" y="44" fill="#ffc2df" font-size="17">Classical growth</text>
+                <text x="485" y="144" fill="#95faff" font-size="17">Quantum speedup (selected tasks)</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-prompt="Quantum computing circuit diagram glowing neon blue, Hadamard and CNOT gate visualization, holographic digital circuit board, futuristic tech interface style, dark background with electric blue highlights, ultra detailed, 4k resolution, dark futuristic background, neon cyan and electric blue glow, subtle purple accents, cinematic lighting, depth of field, high contrast, professional tech conference aesthetic">
+        <div class="slide-content">
+          <span class="eyebrow">Slide 4 - Mechanics</span>
+          <h2>How Quantum Computers Work</h2>
+          <div class="split">
+            <div class="stack">
+              <div class="glass-card">
+                <h3>1) Qubits</h3>
+                <p>Physical implementations include:</p>
+                <ul>
+                  <li>Superconducting circuits</li>
+                  <li>Trapped ions</li>
+                  <li>Photonic systems</li>
+                  <li>Topological qubits</li>
+                </ul>
+              </div>
+              <div class="glass-card">
+                <h3>2) Superposition</h3>
+                <p>|&psi;&rang; = &alpha;|0&rang; + &beta;|1&rang;, where &alpha; and &beta; are probability amplitudes.</p>
+                <p><strong>3) Entanglement:</strong> qubits become correlated beyond classical limits.</p>
+                <p><strong>4) Quantum Gates:</strong> Hadamard, CNOT, and Pauli-X manipulate amplitudes.</p>
+              </div>
+              <div class="glass-card two-tone">
+                <p>Quantum circuits manipulate probability amplitudes through interference to amplify correct answers.</p>
+              </div>
+            </div>
+            <div class="glass-card centered-card">
+              <h3>Quantum Circuit (H + CNOT)</h3>
+              <svg class="diagram-svg" viewBox="0 0 700 300" aria-label="Quantum circuit diagram with animated signal flow">
+                <path id="wire-top" class="circuit-wire" d="M58 98 H650"></path>
+                <path id="wire-bottom" class="circuit-wire" d="M58 202 H650"></path>
+                <text x="20" y="104" fill="#d6f6ff" font-size="20" font-family="Consolas">q0</text>
+                <text x="20" y="208" fill="#d6f6ff" font-size="20" font-family="Consolas">q1</text>
+
+                <rect x="142" y="68" width="66" height="58" class="circuit-gate gate-glow"></rect>
+                <text x="175" y="104" text-anchor="middle" class="gate-label">H</text>
+
+                <circle cx="344" cy="98" r="8.5" fill="#7efbff"></circle>
+                <line x1="344" y1="98" x2="344" y2="202" stroke="#7efbff" stroke-width="2.9"></line>
+                <circle cx="344" cy="202" r="24" fill="none" stroke="#7efbff" stroke-width="2.8"></circle>
+                <line x1="344" y1="179" x2="344" y2="225" stroke="#7efbff" stroke-width="2.8"></line>
+                <line x1="320" y1="202" x2="368" y2="202" stroke="#7efbff" stroke-width="2.8"></line>
+
+                <rect x="520" y="172" width="78" height="58" class="circuit-gate"></rect>
+                <text x="559" y="208" text-anchor="middle" class="gate-label" style="font-size:16px;">Measure</text>
+
+                <circle class="signal-dot" r="4.2" data-path="#wire-top" data-speed="0.16" data-offset="0"></circle>
+                <circle class="signal-dot" r="4.2" data-path="#wire-top" data-speed="0.16" data-offset="220"></circle>
+                <circle class="signal-dot" r="4.2" data-path="#wire-bottom" data-speed="0.13" data-offset="120"></circle>
+              </svg>
+              <p class="small-note">Signal pulses represent quantum state propagation through the circuit.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="slide" data-prompt="Split screen visualization, left side classical binary code 0 and 1 glowing in blue, right side glowing quantum sphere with neon energy aura, futuristic comparison concept, dark background, ultra detailed, 4k resolution, dark futuristic background, neon cyan and electric blue glow, subtle purple accents, cinematic lighting, depth of field, high contrast, professional tech conference aesthetic">
+        <div class="slide-content">
+          <span class="eyebrow">Slide 5 - Comparison</span>
+          <h2>Classical Bits vs Qubits</h2>
+          <div class="split-equal">
+            <div class="stack">
+              <div class="glass-card">
+                <h3>Comparison Table</h3>
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Feature</th>
+                        <th>Classical Bit</th>
+                        <th>Qubit</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>State</td>
+                        <td>0 or 1</td>
+                        <td>0 and 1 simultaneously</td>
+                      </tr>
+                      <tr>
+                        <td>Representation</td>
+                        <td>Binary</td>
+                        <td>Vector on Bloch sphere</td>
+                      </tr>
+                      <tr>
+                        <td>Parallelism</td>
+                        <td>Sequential</td>
+                        <td>Quantum parallelism</td>
+                      </tr>
+                      <tr>
+                        <td>Correlation</td>
+                        <td>Independent</td>
+                        <td>Entangled states possible</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="glass-card two-tone">
+                <h3>Key Understanding</h3>
+                <p>With <strong>n qubits</strong>, the state space scales to <strong>2^n</strong>. That exponential growth is the power source.</p>
+              </div>
+            </div>
+            <div class="glass-card centered-card">
+              <h3>Diagram: Bit vs Qubit</h3>
+              <svg class="diagram-svg" viewBox="0 0 620 340" aria-label="Classical bit vs qubit comparison diagram">
+                <rect x="30" y="40" width="240" height="260" rx="18" fill="rgba(15,27,52,0.55)" stroke="rgba(120,176,247,0.45)"></rect>
+                <text x="150" y="72" text-anchor="middle" fill="#d9f7ff" font-size="20">Classical Bit</text>
+                <rect x="73" y="106" width="74" height="74" rx="10" fill="rgba(68,246,255,0.18)" stroke="#44f6ff"></rect>
+                <rect x="153" y="106" width="74" height="74" rx="10" fill="rgba(165,111,255,0.16)" stroke="#a56fff"></rect>
+                <text x="110" y="153" text-anchor="middle" fill="#dff9ff" font-size="34" font-family="Consolas">0</text>
+                <text x="190" y="153" text-anchor="middle" fill="#dff9ff" font-size="34" font-family="Consolas">1</text>
+                <line x1="110" y1="226" x2="190" y2="226" stroke="rgba(176,208,245,0.7)" stroke-width="2.4" marker-end="url(#arrowHead)"></line>
+                <text x="150" y="258" text-anchor="middle" fill="#a8c8e5" font-size="14">Toggles between two states</text>
+
+                <rect x="320" y="40" width="270" height="260" rx="18" fill="rgba(15,27,52,0.55)" stroke="rgba(120,176,247,0.45)"></rect>
+                <text x="455" y="72" text-anchor="middle" fill="#d9f7ff" font-size="20">Qubit</text>
+                <defs>
+                  <marker id="arrowHead" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 7 3, 0 6" fill="#9deeff"></polygon>
+                  </marker>
+                  <linearGradient id="qubitG" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#44f6ff" stop-opacity="0.9"></stop>
+                    <stop offset="100%" stop-color="#a56fff" stop-opacity="0.9"></stop>
+                  </linearGradient>
+                </defs>
+                <circle cx="455" cy="170" r="88" fill="rgba(37,68,128,0.22)" stroke="rgba(104,173,255,0.62)" stroke-width="2.4"></circle>
+                <ellipse cx="455" cy="170" rx="88" ry="28" fill="none" stroke="rgba(162,202,255,0.42)" stroke-width="1.8"></ellipse>
+                <line x1="455" y1="82" x2="455" y2="258" stroke="rgba(212,235,255,0.68)" stroke-width="2"></line>
+                <line x1="367" y1="170" x2="543" y2="170" stroke="rgba(212,235,255,0.4)" stroke-width="1.7"></line>
+                <g class="bloch-vector" style="transform-origin:455px 170px;">
+                  <line x1="455" y1="170" x2="522" y2="120" stroke="url(#qubitG)" stroke-width="4.4" stroke-linecap="round"></line>
+                  <circle cx="522" cy="120" r="7" fill="#98ffff"></circle>
+                </g>
+                <text x="455" y="313" text-anchor="middle" fill="#a8c8e5" font-size="14">Continuum of measurable probabilities</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-prompt="Glowing 3D Bloch sphere rotating slowly, quantum superposition visualization, neon cyan energy lines, dark futuristic lab setting, ultra realistic, 4k resolution, dark futuristic background, neon cyan and electric blue glow, subtle purple accents, cinematic lighting, depth of field, high contrast, professional tech conference aesthetic">
+        <div class="slide-content">
+          <span class="eyebrow">Slide 6 - Superposition</span>
+          <h2>Superposition Explained</h2>
+          <div class="split">
+            <div class="stack">
+              <div class="glass-card">
+                <h3>Coin Analogy</h3>
+                <p>Classical bit: coin on table (Heads or Tails).</p>
+                <p>Qubit: spinning coin (Heads and Tails at once).</p>
+              </div>
+              <div class="glass-card">
+                <h3>Deeper Concept</h3>
+                <ul>
+                  <li>Measurement collapses the state.</li>
+                  <li>Until measured, the qubit exists as a wave function.</li>
+                  <li>This is not classical randomness, it is quantum probability amplitude.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="glass-card centered-card">
+              <h3>Bloch Sphere (Superposition)</h3>
+              <svg class="diagram-svg bloch-sphere" viewBox="0 0 420 320" aria-label="Alternative Bloch sphere diagram">
+                <defs>
+                  <radialGradient id="bloch6Core" cx="38%" cy="30%" r="70%">
+                    <stop offset="0%" stop-color="rgba(152,255,255,0.8)"></stop>
+                    <stop offset="45%" stop-color="rgba(89,164,255,0.38)"></stop>
+                    <stop offset="100%" stop-color="rgba(24,48,94,0.18)"></stop>
+                  </radialGradient>
+                  <radialGradient id="bloch6Halo" cx="50%" cy="50%" r="62%">
+                    <stop offset="0%" stop-color="rgba(68,246,255,0.26)"></stop>
+                    <stop offset="100%" stop-color="rgba(68,246,255,0)"></stop>
+                  </radialGradient>
+                  <linearGradient id="bloch6Vector" x1="0%" y1="100%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#44f6ff"></stop>
+                    <stop offset="100%" stop-color="#a56fff"></stop>
+                  </linearGradient>
+                  <marker id="bloch6Arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto">
+                    <polygon points="0 0, 8 4, 0 8" fill="#9afcff"></polygon>
+                  </marker>
+                </defs>
+                <circle cx="210" cy="160" r="118" fill="url(#bloch6Halo)"></circle>
+                <circle cx="210" cy="160" r="102" fill="url(#bloch6Core)" stroke="rgba(132,198,255,0.74)" stroke-width="2.8"></circle>
+                <ellipse cx="210" cy="160" rx="102" ry="31" fill="none" stroke="rgba(208,236,255,0.44)" stroke-width="2.1"></ellipse>
+                <ellipse cx="210" cy="160" rx="86" ry="22" fill="none" stroke="rgba(186,221,255,0.28)" stroke-width="1.4"></ellipse>
+                <ellipse cx="210" cy="160" rx="38" ry="102" fill="none" stroke="rgba(208,236,255,0.36)" stroke-width="1.9"></ellipse>
+                <ellipse cx="210" cy="160" rx="58" ry="102" fill="none" stroke="rgba(208,236,255,0.24)" stroke-width="1.2" transform="rotate(32 210 160)"></ellipse>
+                <line x1="210" y1="52" x2="210" y2="268" stroke="rgba(235,247,255,0.78)" stroke-width="2.2"></line>
+                <line x1="108" y1="160" x2="312" y2="160" stroke="rgba(235,247,255,0.48)" stroke-width="1.8"></line>
+                <line x1="210" y1="160" x2="292" y2="160" stroke="rgba(196,227,255,0.42)" stroke-width="1.5" stroke-dasharray="5 5"></line>
+                <path d="M304 176 A48 48 0 0 1 266 216" fill="none" stroke="rgba(194,230,255,0.7)" stroke-width="1.7" marker-end="url(#bloch6Arrow)"></path>
+                <g class="bloch-vector">
+                  <line x1="210" y1="160" x2="292" y2="108" stroke="url(#bloch6Vector)" stroke-width="5.2" stroke-linecap="round" marker-end="url(#bloch6Arrow)"></line>
+                  <circle cx="292" cy="108" r="8.5" fill="#a2ffff" stroke="rgba(230,252,255,0.9)" stroke-width="1.1"></circle>
+                </g>
+                <text x="210" y="36" text-anchor="middle" fill="#ebfbff" font-size="19" font-family="Consolas">|0&gt;</text>
+                <text x="210" y="304" text-anchor="middle" fill="#ebfbff" font-size="19" font-family="Consolas">|1&gt;</text>
+                <text x="316" y="160" fill="#d7f3ff" font-size="15" font-family="Consolas">x</text>
+                <text x="204" y="76" fill="#d7f3ff" font-size="15" font-family="Consolas">z</text>
+                <text x="282" y="222" fill="#d7f3ff" font-size="14">phi</text>
+                <text x="243" y="133" fill="#d7f3ff" font-size="14">theta</text>
+                <text x="210" y="286" text-anchor="middle" fill="rgba(218,241,255,0.86)" font-size="13">|psi&gt; = alpha|0&gt; + beta e^(i phi)|1&gt;</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-prompt="Quantum entanglement visualization, two glowing particles connected by bright neon energy beam, floating in deep space, blue and purple energy glow, futuristic physics concept art, ultra detailed, cinematic 4k, dark futuristic background, neon cyan and electric blue glow, subtle purple accents, depth of field, high contrast, professional tech conference aesthetic">
+        <div class="slide-content">
+          <span class="eyebrow">Slide 7 - Entanglement</span>
+          <h2>Quantum Entanglement</h2>
+          <div class="split">
+            <div class="stack">
+              <div class="glass-card">
+                <h3>Definition</h3>
+                <p>A physical phenomenon where two particles become linked such that the state of one instantly determines the state of the other, regardless of distance.</p>
+              </div>
+              <div class="glass-card">
+                <h3>Importance</h3>
+                <p>Einstein called it:</p>
+                <p><strong>"Spooky action at a distance."</strong></p>
+                <ul>
+                  <li>Quantum teleportation</li>
+                  <li>Quantum cryptography</li>
+                  <li>Massive computational speedups</li>
+                </ul>
+                <p>Entanglement is the backbone of quantum advantage.</p>
+              </div>
+            </div>
+            <div class="glass-card centered-card">
+              <h3>Entangled Particles Visualization</h3>
+              <svg class="diagram-svg" viewBox="0 0 520 320" aria-label="Animated entangled particles and connection line">
+                <defs>
+                  <linearGradient id="entangleGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#44f6ff"></stop>
+                    <stop offset="100%" stop-color="#a56fff"></stop>
+                  </linearGradient>
+                  <radialGradient id="nodeFill" cx="36%" cy="34%" r="75%">
+                    <stop offset="0%" stop-color="#9bffff"></stop>
+                    <stop offset="100%" stop-color="#2f66cf"></stop>
+                  </radialGradient>
+                </defs>
+                <path id="entanglePath" class="entangle-link" d="M94 168 C177 88 343 248 426 168" stroke="url(#entangleGradient)"></path>
+                <circle cx="94" cy="168" r="31" fill="url(#nodeFill)" stroke="rgba(214,244,255,0.68)" stroke-width="2.1"></circle>
+                <circle cx="426" cy="168" r="31" fill="url(#nodeFill)" stroke="rgba(214,244,255,0.68)" stroke-width="2.1"></circle>
+
+                <circle cx="94" cy="168" r="36" fill="none" stroke="rgba(105,231,255,0.68)" stroke-width="2">
+                  <animate attributeName="r" values="34;58" dur="2.2s" repeatCount="indefinite"></animate>
+                  <animate attributeName="opacity" values="0.85;0" dur="2.2s" repeatCount="indefinite"></animate>
+                </circle>
+                <circle cx="426" cy="168" r="36" fill="none" stroke="rgba(165,111,255,0.75)" stroke-width="2">
+                  <animate attributeName="r" values="34;58" dur="2.2s" begin="0.7s" repeatCount="indefinite"></animate>
+                  <animate attributeName="opacity" values="0.85;0" dur="2.2s" begin="0.7s" repeatCount="indefinite"></animate>
+                </circle>
+
+                <circle r="7" fill="#a8ffff">
+                  <animateMotion dur="2.8s" repeatCount="indefinite" rotate="auto">
+                    <mpath href="#entanglePath"></mpath>
+                  </animateMotion>
+                </circle>
+                <text x="54" y="218" fill="#dff8ff" font-size="16">Particle A</text>
+                <text x="385" y="218" fill="#dff8ff" font-size="16">Particle B</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-prompt="Floating holographic tech icons glowing cyan in dark futuristic environment, representing speed, parallelism and computation power, cinematic 4k, dark futuristic background, neon cyan and electric blue glow, subtle purple accents, ultra detailed, cinematic lighting, depth of field, high contrast, professional tech conference aesthetic">
+        <div class="slide-content">
+          <span class="eyebrow">Slide 8 - Advantages</span>
+          <h2>Advantages of Quantum Computing</h2>
+          <div class="icon-grid">
+            <div class="glass-card">
+              <div class="icon-wrap">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M13 2 L4 14 H11 L10 22 L20 9 H13 Z"></path>
+                </svg>
+              </div>
+              <h3>Exponential Speedup</h3>
+              <p>For specific problems such as factoring and search.</p>
+            </div>
+            <div class="glass-card">
+              <div class="icon-wrap">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="3" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="3" width="7" height="7"></rect>
+                  <rect x="3" y="14" width="7" height="7"></rect>
+                  <rect x="14" y="14" width="7" height="7"></rect>
+                </svg>
+              </div>
+              <h3>Massive Parallelism</h3>
+              <p>Explores multiple solution paths simultaneously via superposition.</p>
+            </div>
+            <div class="glass-card">
+              <div class="icon-wrap">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="5" cy="12" r="2"></circle>
+                  <circle cx="12" cy="5" r="2"></circle>
+                  <circle cx="19" cy="12" r="2"></circle>
+                  <circle cx="12" cy="19" r="2"></circle>
+                  <path d="M7 11 L10 6 M14 6 L17 11 M17 13 L14 18 M10 18 L7 13"></path>
+                </svg>
+              </div>
+              <h3>Natural Simulation</h3>
+              <p>Perfect for chemistry, material science, and drug interactions.</p>
+            </div>
+          </div>
+          <div class="glass-card two-tone">
+            <h3>Optimization Power</h3>
+            <p>Quantum methods are promising for logistics, finance, and machine learning optimization problems.</p>
+          </div>
+        </div>
+      </section>
+      <section class="slide" data-prompt="Abstract visualization of quantum algorithms, split-screen concept for Shor&apos;s factoring algorithm and Grover&apos;s search algorithm, glowing quantum circuit lines and probability bars, dark futuristic background, neon cyan and electric blue glow, subtle purple accents, ultra detailed, cinematic lighting, depth of field, 4k resolution, high contrast, professional tech conference aesthetic">
+        <div class="slide-content">
+          <span class="eyebrow">Slide 9 - Algorithms</span>
+          <h2>Quantum Algorithms</h2>
+          <div class="split-equal">
+            <div class="glass-card stack">
+              <h3>Shor's Algorithm</h3>
+              <p>Efficiently factors large numbers.</p>
+              <ul>
+                <li>Implication: breaks RSA encryption.</li>
+                <li>Uses period-finding and interference.</li>
+              </ul>
+            </div>
+            <div class="glass-card stack">
+              <h3>Grover's Algorithm</h3>
+              <p>Searches an unsorted database in sqrt(N) time.</p>
+              <ul>
+                <li>Quadratic speedup over classical search.</li>
+                <li>Amplifies target-state probability amplitudes.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="glass-card centered-card">
+            <h3>Visual Representation</h3>
+            <svg class="diagram-svg" viewBox="0 0 760 250" aria-label="Shor and Grover algorithm visual representation">
+              <rect x="24" y="28" width="338" height="192" rx="16" fill="rgba(14,28,55,0.56)" stroke="rgba(112,172,245,0.42)"></rect>
+              <rect x="398" y="28" width="338" height="192" rx="16" fill="rgba(14,28,55,0.56)" stroke="rgba(112,172,245,0.42)"></rect>
+              <text x="193" y="56" text-anchor="middle" fill="#dcf6ff" font-size="18">Shor: Period Detection</text>
+              <text x="567" y="56" text-anchor="middle" fill="#dcf6ff" font-size="18">Grover: Amplitude Boost</text>
+
+              <polyline points="58,174 97,145 136,174 175,145 214,174 253,145 292,174 331,145" fill="none" stroke="#44f6ff" stroke-width="4"></polyline>
+              <circle cx="331" cy="145" r="7" fill="#9dffff">
+                <animate attributeName="r" values="7;11;7" dur="2.1s" repeatCount="indefinite"></animate>
+              </circle>
+              <text x="190" y="204" text-anchor="middle" fill="#95b8de" font-size="14">Periodicity reveals factors</text>
+
+              <g>
+                <rect x="432" y="173" width="30" height="20" fill="#4f8dff"></rect>
+                <rect x="478" y="165" width="30" height="28" fill="#4f8dff"></rect>
+                <rect x="524" y="154" width="30" height="39" fill="#4f8dff"></rect>
+                <rect x="570" y="136" width="30" height="57" fill="#44f6ff">
+                  <animate attributeName="height" values="57;75;57" dur="2.4s" repeatCount="indefinite"></animate>
+                  <animate attributeName="y" values="136;118;136" dur="2.4s" repeatCount="indefinite"></animate>
+                </rect>
+                <rect x="616" y="166" width="30" height="27" fill="#4f8dff"></rect>
+                <rect x="662" y="174" width="30" height="19" fill="#4f8dff"></rect>
+              </g>
+              <text x="566" y="204" text-anchor="middle" fill="#95b8de" font-size="14">Target state amplified</text>
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-prompt="Holographic Earth with glowing neon network connections, quantum technology influencing global systems, dark sci-fi environment, blue and purple energy glow, ultra detailed, cinematic 4k, dark futuristic background, neon cyan and electric blue glow, subtle purple accents, depth of field, high contrast, professional tech conference aesthetic">
+        <div class="slide-content">
+          <span class="eyebrow">Slide 10 - Applications</span>
+          <h2>Applications</h2>
+          <div class="icon-grid-4">
+            <div class="glass-card">
+              <div class="icon-wrap">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="5" y="11" width="14" height="9" rx="2"></rect>
+                  <path d="M8 11 V8 A4 4 0 0 1 16 8 V11"></path>
+                </svg>
+              </div>
+              <h3>Cryptography</h3>
+              <p>Breaks current encryption and drives adoption of quantum-safe encryption.</p>
+            </div>
+            <div class="glass-card">
+              <div class="icon-wrap">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M10 3 V9"></path>
+                  <path d="M14 3 V9"></path>
+                  <path d="M8 9 H16 L18 20 H6 Z"></path>
+                </svg>
+              </div>
+              <h3>Drug Discovery</h3>
+              <p>Models molecular interactions with higher fidelity for faster compound screening.</p>
+            </div>
+            <div class="glass-card">
+              <div class="icon-wrap">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 3 C7 3 4 6.5 4 11.2 C4 16 7.2 20 12 20 C16.8 20 20 16 20 11.2 C20 6.5 17 3 12 3 Z"></path>
+                  <circle cx="9" cy="10" r="1.2"></circle>
+                  <circle cx="15" cy="10" r="1.2"></circle>
+                  <path d="M8.5 14.5 C9.8 16 14.2 16 15.5 14.5"></path>
+                </svg>
+              </div>
+              <h3>Artificial Intelligence</h3>
+              <p>Potential acceleration for sampling, optimization, and large-scale model training workflows.</p>
+            </div>
+            <div class="glass-card">
+              <div class="icon-wrap">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 16 C5 13 8 13 10 16 C12 19 15 19 17 16 C19 13 21 13 21 16"></path>
+                  <path d="M3 10 C5 7 8 7 10 10 C12 13 15 13 17 10 C19 7 21 7 21 10"></path>
+                </svg>
+              </div>
+              <h3>Climate Modeling</h3>
+              <p>Supports faster optimization of grids, materials, and simulation-heavy forecasting.</p>
+            </div>
+            <div class="glass-card">
+              <div class="icon-wrap">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 18 H20"></path>
+                  <path d="M6 18 V9 L12 6 L18 9 V18"></path>
+                  <path d="M9 13 H15"></path>
+                </svg>
+              </div>
+              <h3>Finance</h3>
+              <p>Portfolio optimization and risk analysis with quantum-enhanced solvers.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-prompt="Quantum noise interference visualization, unstable glowing energy wave with glitch distortion, dark scientific background, neon blue and purple highlights, cinematic dramatic lighting, ultra detailed, 4k resolution, dark futuristic background, neon cyan and electric blue glow, subtle purple accents, depth of field, high contrast, professional tech conference aesthetic">
+        <div class="slide-content">
+          <span class="eyebrow">Slide 11 - Challenges</span>
+          <h2>Challenges</h2>
+          <div class="metric-grid-four">
+            <div class="glass-card">
+              <h3>Decoherence</h3>
+              <p>Quantum states collapse due to environmental interference.</p>
+            </div>
+            <div class="glass-card">
+              <h3>Error Rates</h3>
+              <p>Quantum gates are noisy, and reliability remains a major challenge.</p>
+            </div>
+            <div class="glass-card">
+              <h3>Cryogenic Requirements</h3>
+              <p>Most systems operate near absolute zero to preserve qubit coherence.</p>
+            </div>
+            <div class="glass-card">
+              <h3>Scalability</h3>
+              <p>Maintaining thousands or millions of stable qubits is extremely difficult.</p>
+            </div>
+          </div>
+          <div class="glass-card two-tone">
+            <p>We are currently in the <strong>NISQ Era</strong> (Noisy Intermediate-Scale Quantum).</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-prompt="Futuristic world map showing global investment in quantum computing, glowing neon blue and purple connections between USA, China, European Union and India, financial data streams flowing across continents, digital numbers representing billions of dollars investment, holographic quantum processor floating above Earth, India highlighted with bright saffron and cyan glow, National Quantum Mission concept visualization, high-tech geopolitical technology race atmosphere, dark background, cinematic lighting, ultra detailed, 4k resolution, professional tech conference style">
+        <div class="slide-content">
+          <span class="eyebrow">Slide 12 - Ecosystem</span>
+          <h2>Major Players in Quantum Computing</h2>
+          <div class="split">
+            <div class="player-grid">
+              <div class="glass-card">
+                <div class="player-logo">IBM</div>
+                <p>Superconducting quantum systems.</p>
+              </div>
+              <div class="glass-card">
+                <div class="player-logo">Google</div>
+                <p>Quantum supremacy experiment (2019).</p>
+              </div>
+              <div class="glass-card">
+                <div class="player-logo">Microsoft</div>
+                <p>Topological qubits research.</p>
+              </div>
+              <div class="glass-card">
+                <div class="player-logo">D-Wave</div>
+                <p>Quantum annealing systems.</p>
+              </div>
+            </div>
+            <div class="stack">
+              <div class="glass-card">
+                <h3>Governments Investing Billions</h3>
+                <ul>
+                  <li>USA</li>
+                  <li>China</li>
+                  <li>European Union</li>
+                  <li>India</li>
+                </ul>
+              </div>
+              <div class="glass-card photo-card">
+                <img
+                  class="feature-image"
+                  src="quantum-google.jpg"
+                  alt="Google CEO Sundar Pichai standing beside a quantum computing system"
+                >
+                <p class="small-note">Leadership and investment from major tech players continue to accelerate quantum hardware progress.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="slide" data-prompt="Hybrid computing concept, classical server merging into glowing quantum processor chip, neon energy transition effect connecting both, futuristic technology theme, dark background, ultra detailed, 4k resolution, dark futuristic background, neon cyan and electric blue glow, subtle purple accents, cinematic lighting, depth of field, high contrast, professional tech conference aesthetic">
+        <div class="slide-content">
+          <span class="eyebrow">Slide 13 - Strategy</span>
+          <h2>Will Quantum Replace All Classical Computing?</h2>
+          <div class="split">
+            <div class="stack">
+              <div class="glass-card two-tone">
+                <p class="hybrid-no">No.</p>
+                <p>Quantum computers are specialized accelerators designed for specific classes of problems.</p>
+              </div>
+              <div class="glass-card">
+                <h3>Future = Hybrid Model</h3>
+                <p><strong>Classical + Quantum</strong> systems working together for practical enterprise workflows.</p>
+              </div>
+            </div>
+            <div class="glass-card centered-card">
+              <h3>Hybrid Classical + Quantum Architecture</h3>
+              <svg class="diagram-svg" viewBox="0 0 760 300" aria-label="Hybrid architecture diagram">
+                <defs>
+                  <linearGradient id="flowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#44f6ff"></stop>
+                    <stop offset="100%" stop-color="#a56fff"></stop>
+                  </linearGradient>
+                </defs>
+                <rect x="38" y="84" width="210" height="130" rx="16" fill="rgba(13,30,58,0.64)" stroke="rgba(116,183,255,0.48)"></rect>
+                <rect x="280" y="58" width="200" height="182" rx="16" fill="rgba(15,35,66,0.64)" stroke="rgba(116,183,255,0.48)"></rect>
+                <rect x="512" y="84" width="210" height="130" rx="16" fill="rgba(13,30,58,0.64)" stroke="rgba(116,183,255,0.48)"></rect>
+                <text x="143" y="120" text-anchor="middle" fill="#dcf8ff" font-size="20">Classical CPU/GPU</text>
+                <text x="380" y="98" text-anchor="middle" fill="#dcf8ff" font-size="20">Hybrid Orchestrator</text>
+                <text x="617" y="120" text-anchor="middle" fill="#dcf8ff" font-size="20">Quantum Processor</text>
+                <text x="143" y="162" text-anchor="middle" fill="#9bc0e2" font-size="14">Data prep, control, post-processing</text>
+                <text x="617" y="162" text-anchor="middle" fill="#9bc0e2" font-size="14">Sampling, optimization, simulation</text>
+                <text x="380" y="132" text-anchor="middle" fill="#9bc0e2" font-size="14">Workflow routing and feedback loops</text>
+
+                <path class="flow-line" d="M248 149 H280" stroke="url(#flowGrad)"></path>
+                <path class="flow-line" d="M480 149 H512" stroke="url(#flowGrad)"></path>
+                <path class="flow-line" d="M512 186 H480" stroke="url(#flowGrad)"></path>
+                <path class="flow-line" d="M280 186 H248" stroke="url(#flowGrad)"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-prompt="Close up futuristic quantum processor chip glowing neon blue, intricate circuit patterns illuminated, dark background, ultra detailed macro shot, cinematic 4k, dark futuristic background, neon cyan and electric blue glow, subtle purple accents, depth of field, high contrast, professional tech conference aesthetic">
+        <div class="slide-content">
+          <span class="eyebrow">Slide 14 - Current Status</span>
+          <h2>Current Status of Quantum Computing</h2>
+          <div class="split">
+            <div class="stack">
+              <div class="glass-card">
+                <p>We are in the early commercial experimentation phase.</p>
+                <h3>Milestones</h3>
+                <ul>
+                  <li>Quantum supremacy demonstrated.</li>
+                  <li>100+ qubit processors exist.</li>
+                  <li>Cloud-based quantum access is available.</li>
+                  <li>Still decades away from fault-tolerant universal quantum computers.</li>
+                </ul>
+              </div>
+              <div class="glass-card timeline">
+                <div class="timeline-item"><span class="timeline-dot"></span>Research to engineering transition is accelerating.</div>
+                <div class="timeline-item"><span class="timeline-dot"></span>Commercial pilots are expanding via cloud platforms.</div>
+                <div class="timeline-item"><span class="timeline-dot"></span>Fault tolerance remains the defining long-term goal.</div>
+              </div>
+            </div>
+            <div class="glass-card centered-card">
+              <h3>Maturity Timeline</h3>
+              <svg class="diagram-svg" viewBox="0 0 700 300" aria-label="Quantum maturity timeline with NISQ highlight">
+                <line x1="60" y1="170" x2="640" y2="170" stroke="rgba(170,210,255,0.6)" stroke-width="3"></line>
+                <circle cx="120" cy="170" r="11" fill="#4f8dff"></circle>
+                <circle cx="270" cy="170" r="11" fill="#4f8dff"></circle>
+                <circle cx="420" cy="170" r="14" fill="#44f6ff">
+                  <animate attributeName="r" values="14;19;14" dur="2.4s" repeatCount="indefinite"></animate>
+                </circle>
+                <circle cx="570" cy="170" r="11" fill="#a56fff"></circle>
+                <text x="120" y="144" text-anchor="middle" fill="#d8f4ff" font-size="15">Research</text>
+                <text x="270" y="144" text-anchor="middle" fill="#d8f4ff" font-size="15">Prototypes</text>
+                <text x="420" y="144" text-anchor="middle" fill="#d8f4ff" font-size="15">NISQ Era</text>
+                <text x="570" y="144" text-anchor="middle" fill="#d8f4ff" font-size="15">Fault Tolerance</text>
+                <text x="120" y="206" text-anchor="middle" fill="#98bbdf" font-size="13">Academic + national labs</text>
+                <text x="270" y="206" text-anchor="middle" fill="#98bbdf" font-size="13">Cloud hardware pilots</text>
+                <text x="420" y="206" text-anchor="middle" fill="#98bbdf" font-size="13">Noisy but useful experiments</text>
+                <text x="570" y="206" text-anchor="middle" fill="#98bbdf" font-size="13">Scalable logical qubits</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-prompt="Futuristic city transforming into holographic quantum grid, neon blue energy beams rising into the sky, sci-fi cinematic atmosphere, ultra detailed, 4k resolution, dark futuristic background, neon cyan and electric blue glow, subtle purple accents, cinematic lighting, depth of field, high contrast, professional tech conference aesthetic">
+        <div class="slide-content">
+          <span class="eyebrow">Slide 15 - Outlook</span>
+          <h2>Future of Quantum Computing</h2>
+          <div class="future-wrap">
+            <div class="future-core glass-card">
+              <div class="future-orb" aria-hidden="true"></div>
+            </div>
+            <div class="stack">
+              <div class="glass-card">
+                <h3>Within 10-20 Years</h3>
+                <ul>
+                  <li>Breakthroughs in medicine.</li>
+                  <li>New materials discovery.</li>
+                  <li>Secure quantum internet foundations.</li>
+                  <li>Revolutionary AI model workflows.</li>
+                  <li>Global economic impact across industries.</li>
+                </ul>
+              </div>
+              <div class="glass-card metric-grid">
+                <div class="metric">
+                  <div class="metric-value">Industry Shift</div>
+                  <div class="metric-label">Science + Cybersecurity</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-value">Global Impact</div>
+                  <div class="metric-label">Economic Transformation</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-value">Quantum Era</div>
+                  <div class="metric-label">From Theory to Industry</div>
+                </div>
+              </div>
+              <div class="glass-card two-tone">
+                <p>Quantum computing may redefine industry, science, and cybersecurity.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-prompt="Futuristic financial visualization of quantum computing investment, holographic bar charts rising from world map, glowing neon blue data graphs, digital currency symbols, quantum processor in center emitting light beams, dark sci-fi technology environment, cinematic lighting, ultra detailed, 4k resolution">
+        <div class="slide-content">
+          <span class="eyebrow">Slide 16 - Investment</span>
+          <h2>Global Quantum Investment Flow</h2>
+          <div class="split">
+            <div class="stack">
+              <div class="glass-card">
+                <h3>Strategic Capital Race</h3>
+                <ul>
+                  <li>National missions and private funds are scaling simultaneously.</li>
+                  <li>Investment is concentrated in hardware, software, and talent pipelines.</li>
+                  <li>Cross-border collaboration and competition are both intensifying.</li>
+                </ul>
+              </div>
+              <div class="glass-card metric-grid">
+                <div class="metric">
+                  <div class="metric-value">$B+</div>
+                  <div class="metric-label">Public Funds</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-value">4</div>
+                  <div class="metric-label">Core Regions</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-value">24/7</div>
+                  <div class="metric-label">Tech Race</div>
+                </div>
+              </div>
+              <div class="glass-card two-tone">
+                <p>Funding velocity is now a leading predictor of quantum ecosystem maturity.</p>
+              </div>
+            </div>
+            <div class="glass-card centered-card">
+              <h3>Holographic Investment Dashboard</h3>
+              <svg class="diagram-svg" viewBox="0 0 760 320" aria-label="Financial visualization of global quantum investment">
+                <defs>
+                  <linearGradient id="investBarGlow" x1="0%" y1="100%" x2="0%" y2="0%">
+                    <stop offset="0%" stop-color="rgba(68,246,255,0.3)"></stop>
+                    <stop offset="100%" stop-color="rgba(68,246,255,0.95)"></stop>
+                  </linearGradient>
+                  <linearGradient id="investLinkGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#44f6ff"></stop>
+                    <stop offset="100%" stop-color="#a56fff"></stop>
+                  </linearGradient>
+                  <radialGradient id="investChipCore" cx="50%" cy="50%" r="60%">
+                    <stop offset="0%" stop-color="rgba(158,255,255,0.95)"></stop>
+                    <stop offset="100%" stop-color="rgba(66,118,224,0.5)"></stop>
+                  </radialGradient>
+                </defs>
+
+                <rect x="50" y="232" width="540" height="2.5" fill="rgba(150,204,255,0.6)"></rect>
+                <path d="M66 185 L112 165 L160 173 L193 155 L224 165 L260 159 L302 170 L334 162 L373 175 L404 166 L438 176 L476 169 L512 180 L548 174 L586 186"
+                  fill="none" stroke="rgba(140,196,255,0.36)" stroke-width="2.2"></path>
+                <path d="M72 183 C98 145 126 139 149 151 C163 158 180 170 199 166 C221 160 239 138 265 132 C294 125 320 141 349 147 C374 152 392 137 414 132 C445 124 474 140 504 149 C525 156 548 168 582 164"
+                  fill="rgba(33,70,138,0.16)" stroke="rgba(120,180,255,0.38)" stroke-width="1.6"></path>
+                <path d="M402 126 C430 110 468 108 500 121 C530 134 549 157 568 174"
+                  fill="none" stroke="rgba(120,180,255,0.42)" stroke-width="1.5"></path>
+
+                <rect x="112" y="150" width="36" height="82" rx="8" fill="url(#investBarGlow)" stroke="rgba(170,234,255,0.8)"></rect>
+                <rect x="240" y="134" width="36" height="98" rx="8" fill="url(#investBarGlow)" stroke="rgba(170,234,255,0.8)"></rect>
+                <rect x="372" y="120" width="36" height="112" rx="8" fill="url(#investBarGlow)" stroke="rgba(170,234,255,0.8)"></rect>
+                <rect x="504" y="142" width="36" height="90" rx="8" fill="url(#investBarGlow)" stroke="rgba(170,234,255,0.8)"></rect>
+
+                <text x="130" y="247" text-anchor="middle" fill="#dff7ff" font-size="13">USA</text>
+                <text x="258" y="247" text-anchor="middle" fill="#dff7ff" font-size="13">EU</text>
+                <text x="390" y="247" text-anchor="middle" fill="#dff7ff" font-size="13">China</text>
+                <text x="522" y="247" text-anchor="middle" fill="#dff7ff" font-size="13">India</text>
+
+                <text x="130" y="143" text-anchor="middle" fill="#9fd9ff" font-size="12">$12.4B</text>
+                <text x="258" y="127" text-anchor="middle" fill="#9fd9ff" font-size="12">$10.1B</text>
+                <text x="390" y="113" text-anchor="middle" fill="#9fd9ff" font-size="12">$14.8B</text>
+                <text x="522" y="135" text-anchor="middle" fill="#9fd9ff" font-size="12">$8.9B</text>
+
+                <path d="M130 150 C180 110 260 96 350 86 C450 75 550 80 640 98" fill="none" stroke="url(#investLinkGlow)" stroke-width="2.4"></path>
+                <path d="M258 134 C326 96 406 86 640 108" fill="none" stroke="url(#investLinkGlow)" stroke-width="2.1" opacity="0.9"></path>
+                <path d="M390 120 C452 88 530 85 640 118" fill="none" stroke="url(#investLinkGlow)" stroke-width="2.1" opacity="0.95"></path>
+                <path d="M522 142 C566 122 602 118 640 128" fill="none" stroke="url(#investLinkGlow)" stroke-width="2" opacity="0.9"></path>
+
+                <rect x="622" y="88" width="92" height="92" rx="14" fill="rgba(18,45,88,0.52)" stroke="rgba(120,196,255,0.72)" stroke-width="1.8"></rect>
+                <circle cx="668" cy="134" r="22" fill="url(#investChipCore)"></circle>
+                <rect x="654" y="120" width="28" height="28" rx="5" fill="rgba(20,48,95,0.7)" stroke="rgba(172,234,255,0.8)"></rect>
+                <line x1="668" y1="88" x2="668" y2="68" stroke="rgba(130,210,255,0.8)" stroke-width="1.8"></line>
+                <line x1="714" y1="134" x2="734" y2="134" stroke="rgba(130,210,255,0.8)" stroke-width="1.8"></line>
+                <line x1="668" y1="180" x2="668" y2="200" stroke="rgba(130,210,255,0.8)" stroke-width="1.8"></line>
+                <line x1="622" y1="134" x2="602" y2="134" stroke="rgba(130,210,255,0.8)" stroke-width="1.8"></line>
+
+                <text x="620" y="56" fill="#bde8ff" font-size="14">$</text>
+                <text x="702" y="58" fill="#bde8ff" font-size="13">EUR</text>
+                <text x="730" y="110" fill="#bde8ff" font-size="12">CNY</text>
+                <text x="730" y="184" fill="#bde8ff" font-size="12">INR</text>
+              </svg>
+              <p class="small-note">A global funding web now drives quantum hardware scale-up and national technology strategies.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-prompt="Glowing neon sine wave floating across dark futuristic background, quantum wave function visualization, elegant minimal style, cinematic lighting, ultra detailed, 4k resolution, dark futuristic background, neon cyan and electric blue glow, subtle purple accents, depth of field, high contrast, professional tech conference aesthetic">
+        <div class="slide-content">
+          <span class="eyebrow">Slide 17 - Closing</span>
+          <div class="thank-you">
+            <h1>Thank You</h1>
+            <p class="questions">"The future is not classical. It is quantum."</p>
+          </div>
+        </div>
+      </section>
+
+      <div class="nav-bar">
+        <button class="nav-btn" id="prevBtn" type="button">Previous</button>
+        <div class="slide-indicator" id="slideIndicator">01 / 17</div>
+        <button class="nav-btn" id="nextBtn" type="button">Next</button>
+        <div class="key-hint">Use Arrow Left/Right for navigation</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const slides = Array.from(document.querySelectorAll(".slide"));
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      const indicator = document.getElementById("slideIndicator");
+      const particleLayer = document.getElementById("particle-layer");
+      const signalDots = Array.from(document.querySelectorAll(".signal-dot[data-path]"));
+
+      let currentSlide = 0;
+      let targetX = 0;
+      let targetY = 0;
+      let targetRX = 0;
+      let targetRY = 0;
+      let smoothX = 0;
+      let smoothY = 0;
+      let smoothRX = 0;
+      let smoothRY = 0;
+      const pathCache = new Map();
+
+      function createParticles() {
+        particleLayer.innerHTML = "";
+        const count = window.innerWidth > 1200 ? 120 : window.innerWidth > 800 ? 88 : 56;
+        for (let i = 0; i < count; i += 1) {
+          const dot = document.createElement("span");
+          const size = (Math.random() * 4.6 + 1.2).toFixed(2);
+          dot.className = "particle";
+          dot.style.left = `${(Math.random() * 100).toFixed(2)}%`;
+          dot.style.top = `${(Math.random() * 100).toFixed(2)}%`;
+          dot.style.width = `${size}px`;
+          dot.style.height = `${size}px`;
+          dot.style.setProperty("--dx", `${(Math.random() * 160 - 80).toFixed(1)}px`);
+          dot.style.setProperty("--dy", `${(Math.random() * 160 - 80).toFixed(1)}px`);
+          dot.style.setProperty("--duration", `${(11 + Math.random() * 18).toFixed(2)}s`);
+          dot.style.setProperty("--twinkle", `${(1.7 + Math.random() * 2.9).toFixed(2)}s`);
+          dot.style.setProperty("--delay", `${(-Math.random() * 26).toFixed(2)}s`);
+          particleLayer.appendChild(dot);
+        }
+      }
+
+      function renderSlides() {
+        slides.forEach((slide, index) => {
+          slide.classList.toggle("active", index === currentSlide);
+          slide.classList.toggle("past", index < currentSlide);
+          slide.classList.toggle("future", index > currentSlide);
+        });
+        indicator.textContent = `${String(currentSlide + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`;
+        prevBtn.disabled = currentSlide === 0;
+        nextBtn.disabled = currentSlide === slides.length - 1;
+      }
+
+      function goToSlide(index) {
+        const bounded = Math.max(0, Math.min(index, slides.length - 1));
+        if (bounded === currentSlide) {
+          return;
+        }
+        currentSlide = bounded;
+        renderSlides();
+      }
+
+      function nextSlide() {
+        goToSlide(currentSlide + 1);
+      }
+
+      function prevSlide() {
+        goToSlide(currentSlide - 1);
+      }
+
+      prevBtn.addEventListener("click", prevSlide);
+      nextBtn.addEventListener("click", nextSlide);
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowRight" || event.key === "PageDown" || event.key === " ") {
+          event.preventDefault();
+          nextSlide();
+        } else if (event.key === "ArrowLeft" || event.key === "PageUp") {
+          event.preventDefault();
+          prevSlide();
+        } else if (event.key === "Home") {
+          event.preventDefault();
+          goToSlide(0);
+        } else if (event.key === "End") {
+          event.preventDefault();
+          goToSlide(slides.length - 1);
+        }
+      });
+
+      window.addEventListener("pointermove", (event) => {
+        const nx = event.clientX / window.innerWidth - 0.5;
+        const ny = event.clientY / window.innerHeight - 0.5;
+        targetX = -nx * 16;
+        targetY = -ny * 16;
+        targetRX = ny * 3.2;
+        targetRY = -nx * 3.2;
+      });
+
+      window.addEventListener("resize", () => {
+        createParticles();
+      });
+
+      function animateSignals(time) {
+        signalDots.forEach((dot) => {
+          const selector = dot.getAttribute("data-path");
+          if (!selector) {
+            return;
+          }
+          let path = pathCache.get(selector);
+          if (!path) {
+            path = document.querySelector(selector);
+            if (!path) {
+              return;
+            }
+            pathCache.set(selector, path);
+          }
+          const length = path.getTotalLength();
+          const speed = Number(dot.getAttribute("data-speed") || 0.14);
+          const offset = Number(dot.getAttribute("data-offset") || 0);
+          const dist = (time * speed + offset) % length;
+          const point = path.getPointAtLength(dist);
+          dot.setAttribute("cx", point.x.toFixed(2));
+          dot.setAttribute("cy", point.y.toFixed(2));
+        });
+      }
+
+      function tick(time) {
+        smoothX += (targetX - smoothX) * 0.07;
+        smoothY += (targetY - smoothY) * 0.07;
+        smoothRX += (targetRX - smoothRX) * 0.06;
+        smoothRY += (targetRY - smoothRY) * 0.06;
+        document.documentElement.style.setProperty("--px", `${smoothX.toFixed(2)}px`);
+        document.documentElement.style.setProperty("--py", `${smoothY.toFixed(2)}px`);
+        document.documentElement.style.setProperty("--rx", `${smoothRX.toFixed(2)}deg`);
+        document.documentElement.style.setProperty("--ry", `${smoothRY.toFixed(2)}deg`);
+        animateSignals(time * 0.001);
+        requestAnimationFrame(tick);
+      }
+
+      createParticles();
+      renderSlides();
+      requestAnimationFrame(tick);
+    })();
+  </script>
+</body>
+</html>
